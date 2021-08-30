@@ -12,15 +12,22 @@ bpFilt = designfilt('bandpassiir','FilterOrder',param.bpfiltparam.FilterOrder, .
 padSize = round(param.SampleRate);
 dataPerm = permute(data,[2 1 3]); %time x chan x trial
 paddedData  = padarray(dataPerm,padSize,'symmetric','both'); %pad
-% filteredData = filtfilt(bpFilt,paddedData); 
+% filteredData = filtfilt(bpFilt,paddedData);
 filteredData = filter(bpFilt,paddedData);
 
+resampledData = [];
+for trIdx = 1:size(filteredData,3)
+    resampledData(:,:,trIdx) = resample(filteredData(:,:,trIdx),250,1000);
+end
+padSize = padSize/4;
+toi1 = round(param.toi(toiIdx)/4);
+toi2 = round((param.toi(toiIdx)+param.toiWindow)/4);
 
 % hilbert transform
-hilbData = hilbert(filteredData); % hilbert transform
+hilbData = hilbert(resampledData); % hilbert transform
 hilbData = hilbData(padSize+1:end-padSize,:,:);
 hilbData = permute(hilbData,[2 1 3]); %chan x time x trial
-hilbData = hilbData(:,param.toi(toiIdx):param.toi(toiIdx)+param.toiWindow,:); % choose time
+hilbData = hilbData(:,toi1:toi2,:); % choose time
 
 if classFlag == 1
     data1 = hilbData(:,:,param.class.CV==1);

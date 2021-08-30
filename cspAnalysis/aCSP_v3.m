@@ -36,7 +36,7 @@ for subnum = subjects
     %set parameters
     param = [];
     param.subNum = datTableSub.ID; %dataset id
-    param.freq = [7]; %set all start frequencies
+    param.freq = [8]; %set all start frequencies
     param.freqband = [30]; %set all sizes of freq bands, same length as freq
     param.nChCSP = [2 4 6]; %set all total numbers of CSP channels
     param.toi = [size(dataCV,2)-506]; %set toi 991 491
@@ -150,5 +150,5 @@ for subnum = subjects
     toc
 end
 %%
-save('allSub_reftep_2206','allSub','-v7.3')
+save('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_3008','allSub','-v7.3')
 
