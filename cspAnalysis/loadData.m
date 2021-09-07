@@ -22,7 +22,7 @@ load(char(datTableSub.isort),'y')
 
 if ismember(datTableSub.Subnum,[14,15,17])
     chanlocs = chanlocs0(~badCh);
-    badCh2 = ismember({chanlocs.labels},{'P3','P4'});
+    badCh2 = ismember({chanlocs.labels},{'P3','P4','P8','C4'});
     Xclean2 = Xclean2(~badCh2,:,:);
 end
 
