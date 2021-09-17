@@ -4,6 +4,9 @@ function [C,V1,V2,D1,D2] = calculateCSP(param,XTrain1,XTrain2,nCh,regulIdx,nChCS
 nTrain1 = size(XTrain1,3);
 nTrain2 = size(XTrain2,3);
 
+XTrain1 = XTrain1 - mean(XTrain1,2);
+XTrain2 = XTrain2 - mean(XTrain2,2);
+
 %covariance of the training data
 cov1Tr = zeros(nCh,nCh,nTrain1);
 cov2Tr = zeros(nCh,nCh,nTrain2);
