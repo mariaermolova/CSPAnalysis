@@ -8,28 +8,28 @@ XTrain1 = XTrain1 - mean(XTrain1,2);
 XTrain2 = XTrain2 - mean(XTrain2,2);
 
 %covariance of the training data
-cov1Tr = zeros(nCh,nCh,nTrain1);
-cov2Tr = zeros(nCh,nCh,nTrain2);
+cov1Tr = zeros(nCh,nCh);
+cov2Tr = zeros(nCh,nCh);
 if nTrain1==nTrain2
     for trial = 1:nTrain1
         trial1 = squeeze(XTrain1(:,:,trial));
         trial2 = squeeze(XTrain2(:,:,trial));
-        cov1Tr(:,:,trial) = (trial1*trial1')/trace(trial1*trial1');   % S1~[C x C]
-        cov2Tr(:,:,trial) = (trial2*trial2')/trace(trial2*trial2');   % S2~[C x C]
+        cov1Tr = cov1Tr + (trial1*trial1')/trace(trial1*trial1');   % S1~[C x C]
+        cov2Tr = cov2Tr +(trial2*trial2')/trace(trial2*trial2');   % S2~[C x C]
     end
 else
     for trial = 1:nTrain1
         trial1 = squeeze(XTrain1(:,:,trial));
-        cov1Tr(:,:,trial) = (trial1*trial1')/trace(trial1*trial1');   % S1~[C x C]
+        cov1Tr = cov1Tr + (trial1*trial1')/trace(trial1*trial1');   % S1~[C x C]
     end
     for trial = 1:nTrain2
         trial2 = squeeze(XTrain2(:,:,trial));
-        cov2Tr(:,:,trial) = (trial2*trial2')/trace(trial2*trial2');   % S2~[C x C]
+        cov2Tr = cov2Tr + (trial2*trial2')/trace(trial2*trial2');   % S2~[C x C]
     end
 end
-cov1 = mean(cov1Tr,3);
-cov2 = mean(cov2Tr,3);
-covJoint = mean(cat(3,cov1Tr,cov2Tr),3);
+cov1 = cov1Tr/nTrain1;
+cov2 = cov2Tr/nTrain2;
+covJoint = (cov1Tr+cov2Tr)/2;
 
 %csp
 %TODO: decide between mean variance or separate for each channel
