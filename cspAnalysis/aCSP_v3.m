@@ -4,9 +4,9 @@ clear
 % clearvars -except sub_table phases
 
 %% load subject info
-datTable = readtable('subs.xlsx', 'Basic', 1);
+datTable = readtable('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\cspAnalysis\subs.xlsx', 'Basic', 1);
 
-subjects = [8];
+subjects = [9:12];
 
 allSub = cell(1,length(subjects)); 
 
@@ -17,7 +17,7 @@ for subnum = subjects
     
     datTableSub = datTable(subnum,:);
     
-    [Xclean2,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub);
+    [Xclean2,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub); 
     
     
     %%
@@ -37,11 +37,11 @@ for subnum = subjects
     %set parameters
     param = [];
     param.subNum = datTableSub.ID; %dataset id
-    param.freq = [7 13 22 31]; %set all start frequencies
-    param.freqband = [6 9 9 10]; %set all sizes of freq bands, same length as freq
+    param.freq = [8]; %set all start frequencies [7 13 22 31]
+    param.freqband = [22]; %set all sizes of freq bands, same length as freq [6 9 9 10]
     param.nChCSP = [2 4 6]; %set all total numbers of CSP channels
     param.toi = [size(dataCV,2)-506]; %set toi 991 491
-    %param.toi = 191:200:591; %991:100:1490 491:100:990 691:200:1091 191:200:591
+%     param.toi = 191:200:591; %991:100:1490 491:100:990 691:200:1091 191:200:591
     param.toiWindow = 499; %set total time window for sliding, 499 for single window
     param.regul = [1e-8 1e-6 1e-4 1e-2 1e-1]; % regularization of covariance matrix
     param.nFolds = 5;
@@ -68,7 +68,7 @@ for subnum = subjects
     Model = cell(param.nFolds,param.nTimes,length(param.toi),length(param.freq));
     accCVmeans = cell(length(param.toi),length(param.freq));
     
-    for freqIdx = 1:4
+    freqIdx = 1;
     toiIdx = 1;
         
         CM{toiIdx,freqIdx} = zeros(2);
@@ -151,9 +151,9 @@ for subnum = subjects
         
         fprintf(num2str(ACC{toiIdx,freqIdx}.mean))
         toc
-    end
+%     end
 end
 %%
-save('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_0909_2','allSub','-v7.3')
-% save('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\sub17_3008','allSub','-v7.3')
+save('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_2009','allSub','-v7.3')
+
 

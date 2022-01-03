@@ -29,7 +29,7 @@ else
 end
 cov1 = cov1Tr/nTrain1;
 cov2 = cov2Tr/nTrain2;
-covJoint = (cov1Tr+cov2Tr)/2;
+covJoint = (cov1Tr+cov2Tr)/(nTrain1+nTrain2);
 
 %csp
 %TODO: decide between mean variance or separate for each channel
