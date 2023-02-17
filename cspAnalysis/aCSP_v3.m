@@ -1,14 +1,18 @@
 %TODO: different times between subjects, automatize cutting
 % addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP')
+%dependencies: BioInformatics Toolbox
+
 clear
 % clearvars -except sub_table phases
 
 %% load subject info
-datTable = readtable('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\cspAnalysis\subs.xlsx', 'Basic', 1);
+datTable = readtable('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\cspAnalysis\subsTue.xlsx', 'Basic', 1);
 
-subjects = [9:12];
+subjects = [14];
 
 allSub = cell(1,length(subjects)); 
+
+rng(0)
 
 for subnum = subjects
     tic
@@ -18,7 +22,7 @@ for subnum = subjects
     datTableSub = datTable(subnum,:);
     
     [Xclean2,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub); 
-    
+     
     
     %%
     
@@ -40,13 +44,13 @@ for subnum = subjects
     param.freq = [8]; %set all start frequencies [7 13 22 31]
     param.freqband = [22]; %set all sizes of freq bands, same length as freq [6 9 9 10]
     param.nChCSP = [2 4 6]; %set all total numbers of CSP channels
-    param.toi = [size(dataCV,2)-506]; %set toi 991 491
+    param.toi = [size(dataCV,2)-499]; %set toi 991 491
 %     param.toi = 191:200:591; %991:100:1490 491:100:990 691:200:1091 191:200:591
     param.toiWindow = 499; %set total time window for sliding, 499 for single window
     param.regul = [1e-8 1e-6 1e-4 1e-2 1e-1]; % regularization of covariance matrix
     param.nFolds = 5;
-    param.nTimes = 1;
-    param.bpfiltparam.FilterOrder = 6;
+    param.nTimes = 5;
+    param.bpfiltparam.FilterOrder = 6;  
     param.bpfiltparam.DesignMethod = 'butter';
     param.SampleRate = 1000;
     param.class.CV = classIdCV;
@@ -63,8 +67,7 @@ for subnum = subjects
     % Prepare storage for results
     cspOut = struct;
     ACC = cell(length(param.toi),length(param.freq));
-    CM = cell(length(param.toi),length(param.freq));
-    K = cell(length(param.toi),length(param.freq));
+    KAPPA = cell(length(param.toi),length(param.freq));
     Model = cell(param.nFolds,param.nTimes,length(param.toi),length(param.freq));
     accCVmeans = cell(length(param.toi),length(param.freq));
     
@@ -124,7 +127,7 @@ for subnum = subjects
                 [XTrainBP,YTrain,XTestBP,YTest] = calculateVar(param,XTrain1,XTrain2,XTest1,XTest2,C,nCh,nChCSPIdx);
                 [model,cm,acc] = classifyLDA(XTrainBP,XTestBP,YTrain,YTest);
                 
-                CM{toiIdx,freqIdx} = CM{toiIdx,freqIdx} + cm;
+                KAPPA{toiIdx,freqIdx}.all(idxFold,idxTime) = kappa(cm);
                 ACC{toiIdx,freqIdx}.all(idxFold,idxTime) = acc;
                 Model{idxFold,idxTime,toiIdx,freqIdx} = model;
                 accCVmeans{toiIdx,freqIdx}(:,idxFold,idxTime) = accCVmean;
@@ -136,12 +139,14 @@ for subnum = subjects
         ACC{toiIdx,freqIdx}.mean = (mean(mean(ACC{toiIdx,freqIdx}.all),1));
         ACC{toiIdx,freqIdx}.std = std(ACC{toiIdx,freqIdx}.all(:));
         ACC{toiIdx,freqIdx}.sem = ACC{toiIdx,freqIdx}.std/sqrt(param.nTimes*param.nFolds);
-        K{toiIdx,freqIdx} = kappa(CM{toiIdx,freqIdx});
+        KAPPA{toiIdx,freqIdx}.mean = (mean(mean(KAPPA{toiIdx,freqIdx}.all),1));
+        KAPPA{toiIdx,freqIdx}.std = std(KAPPA{toiIdx,freqIdx}.all(:));
+        KAPPA{toiIdx,freqIdx}.sem = KAPPA{toiIdx,freqIdx}.std/sqrt(param.nTimes*param.nFolds);
+        
         
         %Save output
         cspOut.ACC = ACC;
-        cspOut.CM = CM;
-        cspOut.K = K;
+        cspOut.KAPPA = KAPPA;
         cspOut.LDA = Model;
         cspOut.param = param;
         cspOut.dataCV = dataCV;
@@ -154,6 +159,6 @@ for subnum = subjects
 %     end
 end
 %%
-save('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_2009','allSub','-v7.3')
+save(append('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_',date),'allSub','-v7.3')
 
 

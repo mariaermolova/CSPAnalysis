@@ -17,11 +17,11 @@ filteredData = filter(bpFilt,paddedData);
 
 resampledData = [];
 for trIdx = 1:size(filteredData,3)
-    resampledData(:,:,trIdx) = resample(filteredData(:,:,trIdx),250,1000);
+    resampledData(:,:,trIdx) = resample(filteredData(:,:,trIdx),250,1000); %!!!!!!change back to 250!!!!!
 end
-padSize = padSize/4;
-toi1 = round(param.toi(toiIdx)/4);
-toi2 = round((param.toi(toiIdx)+param.toiWindow)/4);
+padSize = padSize/4; %!!!!!change back to 4!!!!
+toi1 = ceil(param.toi(toiIdx)/4); %!!!!!change back to 4!!!!!
+toi2 = floor((param.toi(toiIdx)+param.toiWindow)/4); %!!!!!change back to 4!!!!
 
 % hilbert transform
 hilbData = hilbert(resampledData); % hilbert transform
