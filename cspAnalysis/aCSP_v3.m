@@ -6,9 +6,9 @@ clear
 % clearvars -except sub_table phases
 
 %% load subject info
-datTable = readtable('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\cspAnalysis\subsTue.xlsx', 'Basic', 1);
+datTable = readtable('subsTue.xlsx', 'Basic', 1);
 
-subjects = [14];
+subjects = [1:20];
 
 allSub = cell(1,length(subjects)); 
 
@@ -41,15 +41,15 @@ for subnum = subjects
     %set parameters
     param = [];
     param.subNum = datTableSub.ID; %dataset id
-    param.freq = [8]; %set all start frequencies [7 13 22 31]
-    param.freqband = [22]; %set all sizes of freq bands, same length as freq [6 9 9 10]
+    param.freq = [8]; %set all start frequencies [7 13 22 31] [4 8 13 30] [8]
+    param.freqband = [22]; %set all sizes of freq bands, same length as freq [6 9 9 10] [4 5 17 10] [22]
     param.nChCSP = [2 4 6]; %set all total numbers of CSP channels
-    param.toi = [size(dataCV,2)-499]; %set toi 991 491
-%     param.toi = 191:200:591; %991:100:1490 491:100:990 691:200:1091 191:200:591
+    param.toi = [size(dataCV,2)-499]; %set toi 
+%     param.toi = 1; %991:100:1490 491:100:990 691:200:1091 191:200:591 1:250:751
     param.toiWindow = 499; %set total time window for sliding, 499 for single window
     param.regul = [1e-8 1e-6 1e-4 1e-2 1e-1]; % regularization of covariance matrix
     param.nFolds = 5;
-    param.nTimes = 5;
+    param.nTimes = 5; %1
     param.bpfiltparam.FilterOrder = 6;  
     param.bpfiltparam.DesignMethod = 'butter';
     param.SampleRate = 1000;
@@ -71,8 +71,8 @@ for subnum = subjects
     Model = cell(param.nFolds,param.nTimes,length(param.toi),length(param.freq));
     accCVmeans = cell(length(param.toi),length(param.freq));
     
-    freqIdx = 1;
-    toiIdx = 1;
+    for freqIdx = 1:length(param.freq)
+    for toiIdx = 1:length(param.toi)
         
         CM{toiIdx,freqIdx} = zeros(2);
         ACC{toiIdx,freqIdx}.all = zeros(param.nFolds,param.nTimes);
@@ -134,6 +134,7 @@ for subnum = subjects
                 
             end
         end
+    end
         
         % Mean accuracies
         ACC{toiIdx,freqIdx}.mean = (mean(mean(ACC{toiIdx,freqIdx}.all),1));
@@ -147,7 +148,7 @@ for subnum = subjects
         %Save output
         cspOut.ACC = ACC;
         cspOut.KAPPA = KAPPA;
-        cspOut.LDA = Model;
+        cspOut.LDA = Model; 
         cspOut.param = param;
         cspOut.dataCV = dataCV;
         % cspOut.dataVal = dataVal;
@@ -156,7 +157,7 @@ for subnum = subjects
         
         fprintf(num2str(ACC{toiIdx,freqIdx}.mean))
         toc
-%     end
+    end
 end
 %%
 save(append('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\allSub_reftep_',date),'allSub','-v7.3')

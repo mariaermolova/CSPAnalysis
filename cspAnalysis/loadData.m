@@ -17,8 +17,8 @@ else
     goodTrials(badTrInds)=0;
 end
 
-load(char(datTableSub.isort),'isort')
-load(char(datTableSub.isort),'y')
+load(char(datTableSub.Data),'isort')
+load(char(datTableSub.Data),'y')
 
 if ismember(datTableSub.Subnum,[14,15,16])
     chanlocs = chanlocs0(~badCh);
