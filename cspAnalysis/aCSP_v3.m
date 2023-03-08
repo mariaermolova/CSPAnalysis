@@ -33,9 +33,6 @@ for subnum = subjects
     dataCV = Xclean2;
     classIdCV = classId;
 
-    %     [dataCV,dataVal,classIdCV,classIdVal]=separateCVandValHigh(Xclean2,classId,25); % for when we want validation set with only highes meps
-    %     [dataCV,dataVal,classIdCV,classIdVal]=separateCVandVal(data,classId,200,25); for when we want an untouched validation set
-
     %%
 
     %set parameters
@@ -54,7 +51,6 @@ for subnum = subjects
     param.bpfiltparam.DesignMethod = 'butter';
     param.SampleRate = 1000;
     param.class.CV = classIdCV;
-    % param.class.Val = classIdVal;
     param.ndel = 500;
     hyperParamList(:,1) = [repmat(1,5,1); repmat(2,5,1); repmat(3,5,1)];
     hyperParamList(:,2) = [repmat([1 2 3 4 5]',3,1)];
@@ -81,8 +77,6 @@ for subnum = subjects
             % prepare data: filter in foi, hilbert transform, cut
             % to toi, equalize trials if needed
             [data1,data2] = prepDataforCSP(param,dataCV,freqIdx,toiIdx,0,1); % trialFlag(0=equal trials,1=non-equal),classFlag(1=CV,2=Val)
-            % [data1CV,data2CV] = prepDataforCSP(param,dataCV,freqIdx,toiIdx,0,1);
-            % [data1Val,data2Val] = prepDataforCSP(param,dataVal,freqIdx,toiIdx,0,2);
 
             % [covN] = noiseCovariance(param,dataCV);
             [covN] = [];
@@ -90,21 +84,11 @@ for subnum = subjects
             [nCh,nTm,nTr1] = size(data1);
             [~,~,nTr2] = size(data2);
 
-            % [nCh,nTm,nTr1CV] = size(data1CV);
-            % [~,~,nTr2CV] = size(data2CV);
-            % [~,~,nTr1Val] = size(data1Val);
-            % [~,~,nTr2Val] = size(data2Val);
-
             for idxTime = 1:param.nTimes
 
                 %create indices for 10 folds
                 indClass1 = crossvalind('Kfold',nTr1,param.nFolds);
                 indClass2 = crossvalind('Kfold',nTr2,param.nFolds);
-
-                %     indClass1CV = crossvalind('Kfold',nTr1CV,param.nFolds);
-                %     indClass2CV = crossvalind('Kfold',nTr2CV,param.nFolds);
-                %     indClass1Val = crossvalind('Kfold',nTr1Val,param.nFolds);
-                %     indClass2Val = crossvalind('Kfold',nTr2Val,param.nFolds);
 
                 for idxFold = 1:param.nFolds
 
@@ -112,8 +96,6 @@ for subnum = subjects
 
                     %divide into training and test data
                     [XTrain1,XTrain2,XTest1,XTest2] = divideTrainTest(data1,data2,indClass1,indClass2,idxFold);
-                    %         [XTrain1,XTrain2,~,~] = divideTrainTest(data1CV,data2CV,indClass1CV,indClass2CV,idxFold);
-                    %         [~,~,XTest1,XTest2] = divideTrainTest(data1Val,data2Val,indClass1Val,indClass2Val,idxFold);
 
                     [accCVmean,bestParamIdx] = CVHyperparameters(param,XTrain1,XTrain2,covN);
 
@@ -155,7 +137,6 @@ for subnum = subjects
     cspOut.LDA = Model;
     cspOut.param = param;
     cspOut.dataCV = dataCV;
-    % cspOut.dataVal = dataVal;
     cspOut.accCVmeans = accCVmeans;
     allSub{1,subnum} = cspOut;
 
