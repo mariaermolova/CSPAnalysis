@@ -20,15 +20,6 @@ end
 load(char(datTableSub.Data),'isort')
 load(char(datTableSub.Data),'y')
 
-if ismember(datTableSub.Subnum,[14,15,16])
-    chanlocs = chanlocs0(~badCh);
-    badCh2 = ismember({chanlocs.labels},{'P3','P4'});
-    Xclean2 = Xclean2(~badCh2,:,:);
-elseif ismember(datTableSub.Subnum,[17])
-    chanlocs = chanlocs0(~badCh);
-    badCh2 = ismember({chanlocs.labels},{'P3','P4','P8','C4'});
-    Xclean2 = Xclean2(~badCh2,:,:);
-end
 
 end
 
