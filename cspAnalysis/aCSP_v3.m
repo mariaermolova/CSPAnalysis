@@ -1,5 +1,4 @@
-
-%dependencies: BioInformatics Toolbox,...
+%dependencies: Signal Processing Toolbox, Image Processing Toolbox, Statistics and Machine Learning Toolbox, BioInformatics Toolbox
 
 clear
 
@@ -25,16 +24,11 @@ for subnum = subjects
 
     datTableSub = datTable(subnum,:);
 
-    [Xclean2,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub);
+    [eeg,~,~,~,isort,y] = loadData(datTableSub);
 
-    %% Separate data into 2 classes
+    %% Label data into 2 classes
 
-    Xclean2 = Xclean2(:,:,isort([1:200,end-199:end])); % matrix of all data (chan x time x trial)
-    classId = double(y(isort([1:200,end-199:end])));
-    classId(classId == 0) = 2;
-
-    dataCV = Xclean2;
-    classIdCV = classId;
+    [eeg,classId] = labelData(eeg,y,isort,200); %select number of trials in each class: 200
 
     %% Set analysis parameters
 
@@ -42,14 +36,14 @@ for subnum = subjects
     param.subNum = datTableSub.ID; %dataset id
     param.freq = [8]; %lowest frequencies of analysed freq bands: [8] [7 13 22 31] [4 8 13 30] 
     param.freqband = [22]; %widths of analysed freq bands (freq:(freq+freqband)), vector of the same length as param.freq: [22] [6 9 9 10] [4 5 17 10] 
-    param.toi = [size(dataCV,2)-499]; %toi: [size(dataCV,2)-toiWindow]. [1:250:751], if several time windows
     param.toiWindow = 499; %time window in samples, 499 for reftep analysis
+    param.toi = [size(eeg,2)-toiWindow]; %toi: [size(dataCV,2)-toiWindow]. [1:250:751], if several time windows
     param.nFolds = 5; %number of folds
     param.nTimes = 5; %number of times, 1 or 5
     param.bpfiltparam.FilterOrder = 6; %order of the bandpass filter
     param.bpfiltparam.DesignMethod = 'butter';%type of the bandpass filter
     param.SampleRate = 1000; %SF of input eeg data
-    param.class.CV = classIdCV; %store class indices
+    param.class.CV = classId; %store class indices
     param.ndel = 500; %no idea anymore
     param.nChCSP = [2 4 6]; %hyperparameter: number of CSP channels
     param.regul = [1e-8 1e-6 1e-4 1e-2 1e-1]; %hyperparameter: regularization coefficient for csp
@@ -82,7 +76,7 @@ for subnum = subjects
 
             % Prepare data for analysis
             % filter in foi, hilbert transform, cut to toi, equalize trials if needed
-            [data1,data2] = prepDataforCSP(param,dataCV,freqIdx,toiIdx,0,1); % trialFlag(0=equal N of trials,1=non-equal),classFlag(1=CV,2=Val)
+            [data1,data2] = prepDataforCSP(param,eeg,freqIdx,toiIdx,0,1); % trialFlag(0=equal N of trials,1=non-equal),classFlag(1=CV,2=Val)
 
             % Prepare spatial noise covariance for CSP regularization
             % [covN] = noiseCovariance(param,dataCV);
@@ -152,7 +146,7 @@ for subnum = subjects
     cspOut.KAPPA = KAPPA;
     cspOut.LDA = Model;
     cspOut.param = param;
-    cspOut.dataCV = dataCV;
+    cspOut.dataCV = eeg;
     cspOut.accCVmeans = accCVmeans;
 
     allSub{1,subnum} = cspOut;
