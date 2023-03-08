@@ -6,9 +6,9 @@ clear
 % clearvars -except sub_table phases
 
 %% load subject info
-datTable = readtable('subsTue.xlsx', 'Basic', 1);
+datTable = readtable('SCREEN3_list.xlsx', 'Basic', 1);
 
-subjects = [1:20];
+subjects = [1:11];
 
 allSub = cell(1,length(subjects));
 
@@ -44,9 +44,9 @@ for subnum = subjects
     param.freq = [8]; %set all start frequencies [7 13 22 31] [4 8 13 30] [8]
     param.freqband = [22]; %set all sizes of freq bands, same length as freq [6 9 9 10] [4 5 17 10] [22]
     param.nChCSP = [2 4 6]; %set all total numbers of CSP channels
-    %     param.toi = [size(dataCV,2)-499]; %set toi
-    param.toi =  1:250:751; %991:100:1490 491:100:990 691:200:1091 191:200:591 1:250:751
-    param.toiWindow = 499; %set total time window for sliding, 499 for single window
+    param.toi = [size(dataCV,2)-494]; %set toi
+%     param.toi =  1:250:751; %991:100:1490 491:100:990 691:200:1091 191:200:591 1:250:751
+    param.toiWindow = 494; %set total time window for sliding, 499 for single window
     param.regul = [1e-8 1e-6 1e-4 1e-2 1e-1]; % regularization of covariance matrix
     param.nFolds = 5;
     param.nTimes = 1; %1 5
@@ -165,6 +165,6 @@ for subnum = subjects
 
 end
 %%
-save(append('C:\Users\BNPPC08\Desktop\Maria\matlab\Projects\CSP\CSPRepo\output\timeWindows_reftep_',date),'allSub','-v7.3')
+save(append('W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\screen3\output\screen3_',date),'allSub','-v7.3')
 
 
