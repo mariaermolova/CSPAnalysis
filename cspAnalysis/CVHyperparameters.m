@@ -1,4 +1,4 @@
-function [accCVmean,bestParamIdx] = CVHyperparameters(param,data1,data2,covN)
+function [accCVmean,idxnChCSP,idxRegulCoef] = CVHyperparameters(param,data1,data2,covN)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 %create indices for 10 folds
@@ -14,17 +14,17 @@ for idxFold = 1:param.nFolds
     
     parfor idxHParam = 1:size(param.hyperParamList,1)
         
-        nChCSPIdx = param.hyperParamList(idxHParam,1);
-        regulIdx = param.hyperParamList(idxHParam,2);
+        idxnChCSP = param.hyperParamList(idxHParam,1);
+        idxRegulCoef = param.hyperParamList(idxHParam,2);
         
         %divide into training and test data
         [XTrain1,XTrain2,XTest1,XTest2] = divideTrainTest(data1,data2,indClass1,indClass2,idxFold);
         
         %calculate csp filters from training data
-        [C,~,~] = calculateCSP(param,XTrain1,XTrain2,nCh,regulIdx,nChCSPIdx,covN);
+        [C,~,~] = calculateCSP(param,XTrain1,XTrain2,nCh,idxRegulCoef,idxnChCSP,covN);
         
         %calculate variance from CSP-filtered covariance
-        [XTrainBP,YTrain,XTestBP,YTest] = calculateVar(param,XTrain1,XTrain2,XTest1,XTest2,C,nCh,nChCSPIdx);
+        [XTrainBP,YTrain,XTestBP,YTest] = calculateVar(param,XTrain1,XTrain2,XTest1,XTest2,C,nCh,idxnChCSP);
         
         % Classification
         [~,~,acc] = classifyLDA(XTrainBP,XTestBP,YTrain,YTest);
@@ -35,6 +35,9 @@ for idxFold = 1:param.nFolds
 end
 accCVmean = mean(accCV,2);
 [~,bestParamIdx] = max(accCVmean);
+
+idxnChCSP = param.hyperParamList(bestParamIdx,1);
+idxRegulCoef = param.hyperParamList(bestParamIdx,2);
 
 end
 

@@ -34,14 +34,14 @@ covJoint = (cov1Tr+cov2Tr)/(nTrain1+nTrain2);
 %csp
 %TODO: decide between mean variance or separate for each channel
 % [V1,D,~] = eig(cov1, cov1 + cov2 + mean(diag(covJoint))*(eye(nCh)*param.regul(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
-[V1,D,~] = eig(cov1, cov1 + cov2 + diag(covJoint)'.*(eye(nCh)*param.regul(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
+[V1,D,~] = eig(cov1, cov1 + cov2 + diag(covJoint)'.*(eye(nCh)*param.regulCoef(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
 
 %sort eigenvalues and vectors
 [D1,d_order] = sort(D(D~=0), 'descend');
 V1 = V1(:,d_order);
 
 % [V2,D,~] = eig(cov2, cov1 + cov2 + mean(diag(covJoint))*(eye(nCh)*param.regul(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
-[V2,D,~] = eig(cov2, cov1 + cov2 + diag(covJoint)'.*(eye(nCh)*param.regul(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
+[V2,D,~] = eig(cov2, cov1 + cov2 + diag(covJoint)'.*(eye(nCh)*param.regulCoef(regulIdx)),'qz');   % Mixing matrix V (spatial filters are columns)
 
 %sort eigenvalues and vectors
 [D2,d_order] = sort(D(D~=0), 'descend');
