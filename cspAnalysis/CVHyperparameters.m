@@ -1,12 +1,11 @@
 function [accCVmean,idxnChCSP,idxRegulCoef] = CVHyperparameters(param,data1,data2,covN)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
-%create indices for 10 folds
-[nCh,~,nTr1] = size(data1);
-[~,~,nTr2] = size(data2);
+%Select hyperparameters via CV
 
-indClass1 = crossvalind('Kfold',nTr1,param.nFolds);
-indClass2 = crossvalind('Kfold',nTr2,param.nFolds);
+%create indices for 10 folds
+[nCh,~,nTr] = size(data1);
+
+indClass1 = crossvalind('Kfold',nTr,param.nFolds);
+indClass2 = crossvalind('Kfold',nTr,param.nFolds);
 
 accCV = zeros(size(param.hyperParamList,1),param.nFolds);
 

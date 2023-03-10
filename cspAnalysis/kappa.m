@@ -85,26 +85,26 @@ m=size(x,1);
 tr=repmat('-',1,80);
 if w==0 || w==-1
     f=diag(ones(1,m)); %unweighted
-    disp('UNWEIGHTED COHEN''S KAPPA')
-    disp(tr)
+%     disp('UNWEIGHTED COHEN''S KAPPA')
+%     disp(tr)
     kcomp;
-    disp(' ')
+%     disp(' ')
 end
 if w==1 || w==-1
     J=repmat((1:1:m),m,1);
     I=flipud(rot90(J));
     f=1-abs(I-J)./(m-1); %linear weight
-    disp('LINEAR WEIGHTED COHEN''S KAPPA')
-    disp(tr)
+%     disp('LINEAR WEIGHTED COHEN''S KAPPA')
+%     disp(tr)
     kcomp;
-    disp(' ')
+%     disp(' ')
 end
 if w==2 || w==-1
     J=repmat((1:1:m),m,1);
     I=flipud(rot90(J));
     f=1-((I-J)./(m-1)).^2; %quadratic weight
-    disp('QUADRATIC WEIGHTED COHEN''S KAPPA')
-    disp(tr)
+%     disp('QUADRATIC WEIGHTED COHEN''S KAPPA')
+%     disp(tr)
     kcomp;
 end
 

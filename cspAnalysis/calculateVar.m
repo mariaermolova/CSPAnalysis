@@ -38,9 +38,12 @@ else
 %         XTrain2BPlog(trial,:) = log(XTrain2BP(trial,:)/sum(XTrain2BP(trial,:)));
     end
 end
+
+%predictor features
 XTrainBP = [XTrain1BP;XTrain2BP];
 % XTrainBP = [XTrain1BP,XTrain1BPlog;XTrain2BP,XTrain2BPlog];
 
+%class labels
 YTrain = ones(nTrain, 1);
 YTrain(nTrain1+1:end) = 2;
 
@@ -80,9 +83,12 @@ else
 %         XTest2BPlog(trial,:) = log(XTest2BP(trial,:)/sum(XTest2BP(trial,:)));
     end
 end
+
+%predictor features
 XTestBP = [XTest1BP;XTest2BP];
 % XTestBP = [XTest1BP,XTest1BPlog;XTest2BP,XTest2BPlog];
 
+%class labels
 YTest = ones(nTest, 1);
 YTest(nTest1+1:end) = 2;
 

@@ -1,8 +1,8 @@
-function [XTrain1,XTrain2,XTest1,XTest2] = divideTrainTest(data1,data2,indClass1,indClass2,idxFold)
+function [XTrain1,XTrain2,XTest1,XTest2] = divideTrainTest(data1,data2,idcClass1,idcClass2,idxFold)
 %divide data into training and testing groups
 
-testIndClass1 = (indClass1 == idxFold);
-testIndClass2 = (indClass2 == idxFold);
+testIndClass1 = (idcClass1 == idxFold);
+testIndClass2 = (idcClass2 == idxFold);
 
 trainIndClass1 = ~testIndClass1;
 trainIndClass2 = ~testIndClass2;

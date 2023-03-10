@@ -1,11 +1,11 @@
-function [Xclean2,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+function [eeg,chanlocs0,badCh,goodTrials,isort,y] = loadData(datTableSub)
+%load EEG data, channel locations, removed channel indices, retained trial
+%indices, MEP sorting indices, class labels
 load(char(datTableSub.Data),char(datTableSub.Struct));
 load(char(datTableSub.Data),'chanlocs0');
 load(char(datTableSub.Data),'badCh');
 if exist('XAl','var')
-    Xclean2 = XAl;
+    eeg = XAl;
     load(char(datTableSub.Data),'badTrEMG');
     load(char(datTableSub.Data),'badTr');
     goodTrials=logical(~badTr);
@@ -22,4 +22,3 @@ load(char(datTableSub.Data),'y')
 
 
 end
-

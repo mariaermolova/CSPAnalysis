@@ -25,11 +25,11 @@ for subnum = subjects
 
     dataTableSub = dataTable(subnum,:);
 
-    [eeg,~,~,~,mepSorter,label] = loadData(dataTableSub);
+    [eeg,~,~,~,mepSorter,labels] = loadData(dataTableSub);
 
     %% Label data into 2 classes and select sample size
 
-    [eeg,classId] = labelData(eeg,label,mepSorter,200); %select number of trials in each class: 200
+    [eeg,classId] = labelData(eeg,labels,mepSorter,200); %select number of trials in each class: 200
 
     %% Set analysis parameters
 
