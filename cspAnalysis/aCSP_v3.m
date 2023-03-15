@@ -5,9 +5,9 @@ clear
 
 %% Preparation
 
-dataTable = readtable('SCREEN3_list.xlsx', 'Basic', 1); %load data path info
+dataTable = readtable('REFTEP_list.xlsx', 'Basic', 1); %load data path info
 
-subjects = [1:11]; %select subjects for analysis
+subjects = [7:20]; %select subjects for analysis
 
 allSubOut = cell(1,length(subjects)); %main output
 
@@ -19,17 +19,17 @@ for subnum = subjects
 
     tic
 
-    fprintf(num2str(subnum))
+    fprintf('Subject %d ',subnum)
 
     %% Load the data
 
     dataTableSub = dataTable(subnum,:);
 
-    [eeg,~,~,~,mepSorter,labels] = loadData(dataTableSub);
+    [eeg,~,~,~,mepSize,labels] = loadData(dataTableSub);
 
     %% Label data into 2 classes and select sample size
 
-    [eeg,classId] = labelData(eeg,labels,mepSorter,200); %select number of trials in each class: 200
+    [eeg,classId] = labelData(eeg,labels,mepSize,200); %select number of trials in each class: 200
 
     %% Set analysis parameters
 
@@ -38,7 +38,7 @@ for subnum = subjects
     param.freq = [8]; %lowest frequencies of analysed freq bands: [8] [7 13 22 31] [4 8 13 30] 
     param.freqWindow = [22]; %widths of analysed freq bands (freq:(freq+freqband)), vector of the same length as param.freq: [22] [6 9 9 10] [4 5 17 10] 
     param.toiWindow = 499; %time window in samples, 499 for reftep analysis
-    param.toi = [size(eeg,2)-toiWindow]; %toi: [size(dataCV,2)-toiWindow]. [1:250:751], if several time windows
+    param.toi = [size(eeg,2)-param.toiWindow]; %toi: [size(dataCV,2)-toiWindow]. [1:250:751], if several time windows
     param.nFolds = 5; %number of folds
     param.nTimes = 5; %number of times, 1 or 5
     param.bpfiltparam.FilterOrder = 6; %order of the bandpass filter
@@ -53,7 +53,7 @@ for subnum = subjects
 
     %% Clean up and prepare storage space for results
 
-    clearvars -except dataCV dataVal param subnum subjects datTable allSub
+    clearvars -except eeg param subnum subjects dataTable allSubOut
 
     cspOut = struct; %subject's output
     ACC = cell(length(param.toi),length(param.freq)); % classification accuracy
@@ -104,7 +104,7 @@ for subnum = subjects
                     [accCVmean,idxnChCSP,idxRegulCoef] = CVHyperparameters(param,XTrain1,XTrain2,covN);
 
                     % Calculate csp filters from training data
-                    [C,~,~] = calculateCSP(param,XTrain1,XTrain2,nCh,idxnChCSP,idxRegulCoef,covN);
+                    [C,~,~] = calculateCSP(param,XTrain1,XTrain2,nCh,idxRegulCoef,idxnChCSP,covN);
 
                     % Calculate classification features
                     [XTrainBP,YTrain,XTestBP,YTest] = calculateVar(param,XTrain1,XTrain2,XTest1,XTest2,C,nCh,idxnChCSP);
@@ -132,7 +132,7 @@ for subnum = subjects
             KAPPA{idxToi,idxFreq}.sem = KAPPA{idxToi,idxFreq}.std/sqrt(param.nTimes*param.nFolds);
 
             % get a sneakpeek of the result
-            fprintf(num2str(ACC{idxToi,idxFreq}.mean))
+            fprintf('Accuracy %4.2f ', ACC{idxToi,idxFreq}.mean)
 
         end
     end
@@ -152,6 +152,6 @@ for subnum = subjects
 end
 
 %% Save all output
-save(append('W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\screen3\output\screen3_',date),'allSubOut','-v7.3')
+save(append('W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\output\reftep_',date),'allSubOut','-v7.3')
 
 
