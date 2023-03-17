@@ -5,9 +5,9 @@ clear
 
 %% Preparation
 
-dataTable = readtable('REFTEP_list.xlsx', 'Basic', 1); %load data path info
+dataTable = readtable('REFTEP_list_Z.xlsx', 'Basic', 1); %load data path info
 
-subjects = [7:20]; %select subjects for analysis
+subjects = [1:20]; %select subjects for analysis
 
 allSubOut = cell(1,length(subjects)); %main output
 
@@ -38,7 +38,7 @@ for subnum = subjects
     param.freq = [8]; %lowest frequencies of analysed freq bands: [8] [7 13 22 31] [4 8 13 30] 
     param.freqWindow = [22]; %widths of analysed freq bands (freq:(freq+freqband)), vector of the same length as param.freq: [22] [6 9 9 10] [4 5 17 10] 
     param.toiWindow = 499; %time window in samples, 499 for reftep analysis
-    param.toi = [size(eeg,2)-param.toiWindow]; %toi: [size(dataCV,2)-toiWindow]. [1:250:751], if several time windows
+    param.toi = [size(eeg,2)-param.toiWindow]; %toi: [size(eeg,2)-param.toiWindow]. [1:250:751], if several time windows
     param.nFolds = 5; %number of folds
     param.nTimes = 5; %number of times, 1 or 5
     param.bpfiltparam.FilterOrder = 6; %order of the bandpass filter
@@ -152,6 +152,6 @@ for subnum = subjects
 end
 
 %% Save all output
-save(append('W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\output\reftep_',date),'allSubOut','-v7.3')
+save(append('Z:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\output\log_reftep_',date),'allSubOut','-v7.3')
 
 
