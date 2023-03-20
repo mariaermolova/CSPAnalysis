@@ -3,19 +3,20 @@
 % reorder channels to a common order, re-reference, compute the angle,
 % plot the average across subjects
 
+clear
 projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
-
 addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab14_1_2b')
-addpath 'C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\MatlabFns\Colourmaps'
+addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\MatlabFns\Colourmaps')
 eeglab
-
+load(fullfile(projectPath,'Patterns','allPatterns_15-Mar-2023.mat'));
 datTable = readtable(fullfile(projectPath,'cspAnalysis','REFTEP_list.xlsx'), 'Basic', 1);
-load(fullfile(projectPath,'Patterns','allPatterns_2102.mat'));
 
 %% Interpolate missing channels (on complex patterns)
-
 clear allPatternsLow allPatternsHigh
+
 subjects = [1,2,4,9,18]; %select subjects to plot
+
+load(fullpath(projectPath,'Patterns','chanlocs.mat')) %load template channel location structure
 
 for idxSub = 1:length(subjects)
     
@@ -31,11 +32,11 @@ for idxSub = 1:length(subjects)
     end
 
     %get the patterns of the subject
-    V1inv = allV1inv{idSub};
-    V2inv = allV2inv{idSub};
+    VHinv = allV1inv{idSub};
+    VLinv = allV2inv{idSub};
 
     %prepare patterns of High condition
-    EEG.data = V1inv(:,1);
+    EEG.data = VHinv(:,1);
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = 1;
     EEG.trials = 1;
@@ -50,7 +51,7 @@ for idxSub = 1:length(subjects)
     allPatternsHigh(:,idxSub) = EEG.data;
 
     %prepare patterns of Low condition
-    EEG.data = V2inv(:,1);
+    EEG.data = VLinv(:,1);
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = 1;
     EEG.trials = 1;

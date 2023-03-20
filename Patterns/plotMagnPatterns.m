@@ -1,12 +1,15 @@
 %% plot magnitides of spatial patterns for each subject individually
-projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
 
-datTable = readtable(fullfile(projectPath,'cspAnalysis','REFTEP_list.xlsx'), 'Basic', 1);
+projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
+datTable = readtable(fullfile(projectPath,'cspAnalysis','REFTEP_list.xlsx'), 'Basic', 1); %insert the name of the subject spreadsheet with paths
 addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\MatlabFns\Colourmaps')
 addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab14_1_2b')
+addpath(fullfile(projectPath,'interpretation'))
+load(fullfile(projectPath,'Patterns','allPatterns_15-Mar-2023.mat')) %insert the name of the CSP pattern file
 eeglab
 %% get accuracies for each subject
-[accs] = extract_accuracies(fullfile(projectPath,'output','reftep_15-Mar-2023.mat'));
+[accs] = extract_accuracies(fullfile(projectPath,'output','reftep_15-Mar-2023.mat')); %insert the name of the CSP output file
+accs = accs*100;
 %% select subjects to plot
 subjects = [1:20]; 
 %% plot High patterns
