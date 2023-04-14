@@ -16,7 +16,7 @@ clear allPatternsHigh allPatternsLow
 
 subjects = [1:7,9:20]; %select significant subjects
 
-load(fullpath(projectPath,'Patterns','chanlocs.mat')) %load template channel location structure
+load(fullfile(projectPath,'Patterns','chanlocs.mat')) %load template channel location structure
 
 for idxSub = 1:length(subjects)
     
@@ -66,35 +66,21 @@ for idxSub = 1:length(subjects)
 
 end
 
-%% normalise by 1-norm
-for idxSub = 1:length(subjects)
-    allPatternsHigh(:,idxSub) = allPatternsHigh(:,idxSub)./norm(allPatternsHigh(:,idxSub),1);
-    allPatternsLow(:,idxSub) = allPatternsLow(:,idxSub)./norm(allPatternsLow(:,idxSub),1);
-end
-%% normalise by 2-norm
-for idxSub = 1:length(subjects)
-    allPatternsHigh(:,idxSub) = allPatternsHigh(:,idxSub)./norm(allPatternsHigh(:,idxSub),2);
-    allPatternsLow(:,idxSub) = allPatternsLow(:,idxSub)./norm(allPatternsLow(:,idxSub),2);
-end
-%% normalise by z-scoring
-for idxSub = 1:length(subjects)
-    allPatternsHigh(:,idxSub) = (allPatternsHigh(:,idxSub)-mean(allPatternsHigh(:,idxSub)))./norm(allPatternsHigh(:,idxSub),2);
-    allPatternsLow(:,idxSub) = (allPatternsLow(:,idxSub)-mean(allPatternsHigh(:,idxSub)))./norm(allPatternsHigh(:,idxSub),2);
-end
 %% plot average pattern
 avgPatternHigh = mean(allPatternsHigh,2);
 avgPatternLow = mean(allPatternsLow,2);
 
-figure; tiledlayout(1,2)
+figure; 
+tiledlayout('flow')
 nexttile
-topoplot(avgPatternHigh, chanlocs,'style','map','maplimits','minmax','electrodes','off');
+topoplot(avgPatternHigh, chanlocs,'maplimits','minmax','electrodes','off');
 colorcet('L3','reverse',1)
-title("Mean High pattern")
+title("High pattern (group-average)")
 
 nexttile
-topoplot(avgPatternLow, chanlocs,'style','map','maplimits','minmax','electrodes','off');
+topoplot(avgPatternLow, chanlocs,'maplimits','minmax','electrodes','off');
 colorcet('L3','reverse',1)
-title("Mean Low pattern")
+title("Low pattern (group-average)")
 
 
 
