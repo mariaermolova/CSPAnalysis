@@ -14,9 +14,9 @@ datTable = readtable(fullfile(projectPath,'cspAnalysis','REFTEP_list.xlsx'), 'Ba
 %% Interpolate missing channels (on complex patterns)
 clear allPatternsLow allPatternsHigh
 
-subjects = [1,2,4,9,18]; %select subjects to plot
+subjects = [1,2,4,9,18,19]; %select subjects to plot
 
-load(fullpath(projectPath,'Patterns','chanlocs.mat')) %load template channel location structure
+load(fullfile(projectPath,'Patterns','chanlocs.mat')) %load template channel location structure
 
 for idxSub = 1:length(subjects)
     
@@ -72,16 +72,22 @@ clear topoAnglesHigh topoAnglesLow
 for idxSub = 1:size(allPatternsHigh,2)
 
     %find the index of a new reference channel
-    refind = find(ismember({chanlocs.labels},'C3'));
+    refIndHigh = find(ismember({chanlocs.labels},'FCC3h'));
 
     %get the phase pattern of High condition
     subPattern = allPatternsHigh(:,idxSub);
-    compDiff = conj(subPattern).*subPattern(refind); %re-reference
+    compDiff = conj(subPattern).*subPattern(refIndHigh); %re-reference
     topoAnglesHigh(:,idxSub) = angle(compDiff)*180/pi;   %get the phase
+end
+
+for idxSub = 1:size(allPatternsLow,2)
+
+    %find the index of a new reference channel
+    refIndLow = find(ismember({chanlocs.labels},'Cz'));
 
     %get the phase pattern of Low condition
     subPattern = allPatternsLow(:,idxSub);
-    compDiff = conj(subPattern).*subPattern(refind);
+    compDiff = conj(subPattern).*subPattern(refIndLow);
     topoAnglesLow(:,idxSub) = angle(compDiff)*180/pi;
 end
 
@@ -93,15 +99,15 @@ avgTopoAnglesLow = mean(topoAnglesLow,2);
 
 figure; tiledlayout(1,2)
 nexttile
-topoplot(avgTopoAnglesHigh, chanlocs,'maplimits','minmax','electrodes','off','emarker2',{[refind],'o','k',6});
-colormap(parula)
+topoplot(avgTopoAnglesHigh, chanlocs,'style','map','maplimits','minmax','electrodes','off','emarker2',{[refind],'o','k',6});
+colorcet('L9')
 title("Avg phase pattern for High")
-caxis([-180 180])
+caxis([-150 150])
 colorbar
 
 nexttile
-topoplot(avgTopoAnglesLow, chanlocs,'maplimits','minmax','electrodes','off','emarker2',{[refind],'o','k',6});
-colormap(parula)
+topoplot(avgTopoAnglesLow, chanlocs,'style','map','maplimits','minmax','electrodes','off','emarker2',{[refIndHigh],'o','k',6});
+colorcet('L9')
 title("Avg phase pattern for Low")
-caxis([-180 180])
+caxis([-150 150])
 colorbar
