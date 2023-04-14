@@ -4,7 +4,9 @@
 % across pairs. Derive upper limit of the CI by permuting channels in every
 % pattern and repeating the analysis 10 000 times.
 
+clear
 projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
+addpath(fullfile(projectPath,'cspAnalysis'))
 addpath(fullfile(projectPath,'Patterns'))
 addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab14_1_2b')
 eeglab
@@ -21,9 +23,9 @@ for idxSub = 1:length(subjects)
 
     idSub = subjects(idxSub);
 
-    %calculate patterns
+    %calculate patterns (either High or Low)
     %[V1inv,V2inv,V1,V2,C] = calculatePatternsFun(iSub,allSubOut,toiIdx,freqIdx);
-    [~,Vinv,~,~,~] = calculatePatternsFun(idSub,allSubOut,1,1); 
+    [Vinv,~,~,~,~] = calculatePatternsFun(idSub,allSubOut,1,1);
 
     %load channel info
     load(char(datTable.Data(idSub)), 'chanlocs0');
@@ -35,7 +37,7 @@ for idxSub = 1:length(subjects)
     end
 
     %interpolate missing channels
-    EEG.data = abs(Vinv(:,1));
+    EEG.data = abs(Vinv(:,1)); %select first pattern, compute magnitude
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = 1;
     EEG.trials = 1;
@@ -50,32 +52,22 @@ for idxSub = 1:length(subjects)
     allPatterns(:,idxSub) = EEG.data;
 
 end
-%% normalise by 2-norm (doesn't change anything)
-
-for idxSub = 1:length(subjects)
-    allPatterns(:,idxSub) = allPatterns(:,idxSub)./norm(allPatterns(:,idxSub),2);
-end
-%% calculate spatial correlation
+%% calculate spatial correlation of each pattern with an average pattern
 clear coefSim
 
-%create a list of pattern pairs
-patPairs = nchoosek([1:length(subjects)],2);
+%calculate average pattern
+avgPat = mean(allPatterns,2);
 
-for iPair = 1:size(patPairs,1)
-
-    %take magnitude patterns
-    pat1 = abs(allPatterns(:,patPairs(iPair,1))); 
-    pat2 = abs(allPatterns(:,patPairs(iPair,2)));
-
-    %calculate correlation coefficient for a given pair of patterns
-%     coefSim(iPair) =  dot(pat1,pat2 ) / ( norm(pat1) * norm(pat2));
-    r = corrcoef(pat1,pat2); 
-    coefSim(iPair) = r(1,2);
-
+%calculate correlation coefficient for each pattern with the average pattern
+for iPat = 1 : size(allPatterns,2)
+    testPat = allPatterns(:,iPat);
+    r = corrcoef(testPat,avgPat);
+    coefSim(iPat) = r(1,2);
 end
 
 %average coefficients across all pairs
 corrTrue = mean(coefSim)
+
 %% calculate upper CI limit from null distribution
 clear coefSimNull
 for iNull = 1:10000
@@ -83,25 +75,19 @@ for iNull = 1:10000
     clear coefSim idcPatPerm
 
     %randomly permute channels in each pattern
-    for iSub = 1:length(subjects)
-        idcPatPerm(:,iSub) = randperm(size(allPatterns,1));
+    for iPat = 1:length(subjects)
+        idcPatPerm(:,iPat) = randperm(size(allPatterns,1));
     end
     allPatPerm = allPatterns(idcPatPerm);
 
-    %create a list of pattern pairs
-    patPairs = nchoosek([1:length(subjects)],2);
+    %calculate average pattern (i.e. reference)
+    avgPat = mean(allPatterns,2);
 
-    for iPair = 1:size(patPairs,1)
-
-        %take magnitude patterns
-        pat1 = abs(allPatPerm(:,patPairs(iPair,1)));
-        pat2 = abs(allPatPerm(:,patPairs(iPair,2)));
-
-        %calculate correlation coefficient for a given pair of patterns
-%         coefSim(iPair) = dot(pat1,pat2) / ( norm(pat1) * norm(pat2));
-        r = corrcoef(pat1,pat2);
-        coefSim(iPair) = r(1,2);
-
+    %calculate correlation coefficient for each pattern with the average pattern
+    for iPat = 1 : size(allPatPerm,2)
+        testPat = allPatPerm(:,iPat);
+        r = corrcoef(testPat,avgPat);
+        coefSim(iPat) = r(1,2);
     end
 
     %average coefficients across all pairs
