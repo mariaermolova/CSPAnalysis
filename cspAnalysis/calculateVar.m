@@ -11,6 +11,8 @@ covTrain1Tr = zeros(nCh,nCh);
 covTrain2Tr = zeros(nCh,nCh);
 XTrain1BP = zeros(nTrain1,param.nChCSP(nChCSPIdx));
 XTrain2BP = zeros(nTrain2,param.nChCSP(nChCSPIdx));
+% XTrain1BPlog = zeros(nTrain1,param.nChCSP(nChCSPIdx));
+% XTrain2BPlog = zeros(nTrain2,param.nChCSP(nChCSPIdx));
 if nTrain1==nTrain2
     for trial = 1:nTrain1
         trial1 = squeeze(XTrain1(:,:,trial));
@@ -20,9 +22,8 @@ if nTrain1==nTrain2
         XTrain1BP(trial,:) = abs(diag(C'*covTrain1Tr*C));
 %         XTrain1BPlog(trial,:) = log(XTrain1BP(trial,:)/sum(XTrain1BP(trial,:)));
         XTrain2BP(trial,:) = abs(diag(C'*covTrain2Tr*C));
-%         XTrain2BPlog(trial,:) =
-%         log(XTrain2BP(trial,:)/sum(XTrain2BP(trial,:)));b
-%                                                                                                                                      
+%         XTrain2BPlog(trial,:) = log(XTrain2BP(trial,:)/sum(XTrain2BP(trial,:)));
+                                                                                                                                     
     end
 else
     for trial = 1:nTrain1
@@ -41,7 +42,7 @@ end
 
 %predictor features
 XTrainBP = [XTrain1BP;XTrain2BP];
-% XTrainBP = [XTrain1BP,XTrain1BPlog;XTrain2BP,XTrain2BPlog];
+% XTrainBP = [XTrain1BPlog;XTrain2BPlog];
 
 %class labels
 YTrain = ones(nTrain, 1);
@@ -58,6 +59,8 @@ covTest1Tr = zeros(nCh,nCh);
 covTest2Tr = zeros(nCh,nCh);
 XTest1BP = zeros(nTest1,param.nChCSP(nChCSPIdx));
 XTest2BP = zeros(nTest2,param.nChCSP(nChCSPIdx));
+% XTest1BPlog = zeros(nTest1,param.nChCSP(nChCSPIdx));
+% XTest2BPlog = zeros(nTest2,param.nChCSP(nChCSPIdx));
 if nTest1==nTest2
     for trial = 1:nTest1
         trial1 = squeeze(XTest1(:,:,trial));
@@ -86,7 +89,7 @@ end
 
 %predictor features
 XTestBP = [XTest1BP;XTest2BP];
-% XTestBP = [XTest1BP,XTest1BPlog;XTest2BP,XTest2BPlog];
+% XTestBP = [XTest1BPlog;XTest2BPlog];
 
 %class labels
 YTest = ones(nTest, 1);
