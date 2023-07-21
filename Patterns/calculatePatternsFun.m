@@ -21,16 +21,16 @@ function [V1inv,V2inv,V1,V2,C] = calculatePatternsFun(subnum,allSubOut,toiIdx, f
     %     [covN] = noiseCovariance(param,cspOut.dataCV);
     [covN] = [];
     [C,V1,V2,~,~] = calculateCSP(param,XTrain1,XTrain2,nCh,regulIdx,nChCSPIdx,covN);
-
-    %normalise the filters to unit norm
-    for cspIdx = 1:size(V1,2)
-        V1Norm(:,cspIdx) = V1(:,cspIdx)./norm(V1(:,cspIdx),1);
-        V2Norm(:,cspIdx) = V2(:,cspIdx)./norm(V2(:,cspIdx),1);
-    end
     
     % calculate patterns from the filters
-    V1inv = inv(ctranspose(V1Norm));
-    V2inv = inv(ctranspose(V2Norm));
+    V1inv = inv(ctranspose(V1));
+    V2inv = inv(ctranspose(V2));
+
+    %normalise the patterns to unit norm
+    for cspIdx = 1:size(V1,2)
+        V1inv(:,cspIdx) = V1inv(:,cspIdx)./norm(V1inv(:,cspIdx),2);
+        V2inv(:,cspIdx) = V2inv(:,cspIdx)./norm(V2inv(:,cspIdx),2);
+    end
     
 end
 
