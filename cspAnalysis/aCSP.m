@@ -5,7 +5,7 @@ clear
 
 %% Preparation
 
-dataTable = readtable('REFTEP_list_Z.xlsx', 'Basic', 1); %load data path info
+dataTable = readtable('REFTEP_list.xlsx', 'Basic', 1); %load data path info
 
 subjects = [1:20]; %select subjects for analysis
 
@@ -152,6 +152,6 @@ for subnum = subjects
 end
 
 %% Save all output
-save(append('Z:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\output\log_reftep_',date),'allSubOut','-v7.3')
+save(append('W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo\output\reftep_',date),'allSubOut','-v7.3')
 
 
