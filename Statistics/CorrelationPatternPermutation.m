@@ -36,22 +36,41 @@ for idxSub = 1:length(subjects)
         rmch = badCh;
     end
 
-    %interpolate missing channels
-    EEG.data = abs(Vinv(:,1)); %select first pattern, compute magnitude
+    %interpolate real patterns of High condition
+    EEG.data = real(Vinv(:,1)); %take real part of the first pattern
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = 1;
     EEG.trials = 1;
     EEG.nbchan = sum(~rmch);
-    EEG = pop_interp( EEG, chanlocs,'spherical');
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
 
     %reorder data by a standard channel order
     [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
     EEG.chanlocs = EEG.chanlocs(reorderingIdx);
     EEG.data     = EEG.data(reorderingIdx);
 
-    allPatterns(:,idxSub) = EEG.data;
+    realPattern = EEG.data;
+
+    %interpolate imaginary patterns of High condition
+    EEG.data = imag(Vinv(:,1)); %take imaginary part of the first pattern
+    EEG.chanlocs = chanlocs0(~rmch);
+    EEG.pnts = 1;
+    EEG.trials = 1;
+    EEG.nbchan = sum(~rmch);
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
+
+    %reorder data by a standard channel order
+    [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
+    EEG.chanlocs = EEG.chanlocs(reorderingIdx);
+    EEG.data     = EEG.data(reorderingIdx);
+
+    imagPattern = EEG.data;
+
+    allPatterns(:,idxSub) = realPattern + 1i*imagPattern; %combine them back into complex values
 
 end
+
+allPatterns = abs(allPatterns);
 %% calculate spatial correlation of each pattern with an average pattern
 clear coefSim
 
@@ -87,20 +106,39 @@ for idxSub = 1:length(subjects)
         rmch = badCh;
     end
 
-    %interpolate missing channels
-    EEG.data = abs(Vinv); %sic! including all patterns now
+     %interpolate real patterns of High condition
+    EEG.data = real(Vinv); %take real part of the first pattern. sic! including all patterns now
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = size(Vinv,2);
     EEG.trials = 1;
     EEG.nbchan = sum(~rmch);
-    EEG = pop_interp( EEG, chanlocs,'spherical');
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
 
     %reorder data by a standard channel order
     [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
     EEG.chanlocs = EEG.chanlocs(reorderingIdx);
     EEG.data     = EEG.data(reorderingIdx,:);
 
-    allPatInterpl{idxSub} = EEG.data;
+    realPattern = EEG.data;
+
+    %interpolate imaginary patterns of High condition
+    EEG.data = imag(Vinv); %take imaginary part of the first pattern. sic! including all patterns now
+    EEG.chanlocs = chanlocs0(~rmch);
+    EEG.pnts = size(Vinv,2);
+    EEG.trials = 1;
+    EEG.nbchan = sum(~rmch);
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
+
+    %reorder data by a standard channel order
+    [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
+    EEG.chanlocs = EEG.chanlocs(reorderingIdx);
+    EEG.data     = EEG.data(reorderingIdx,:);
+
+    imagPattern = EEG.data;
+
+    complexPattern = realPattern + 1i*imagPattern; %combine them back into complex values;
+
+    allPatInterpl{idxSub} = abs(complexPattern);
 
 end
 %% calculate upper CI limit from null distribution

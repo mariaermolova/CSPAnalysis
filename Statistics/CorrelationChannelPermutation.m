@@ -8,7 +8,7 @@ clear
 projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
 addpath(fullfile(projectPath,'cspAnalysis'))
 addpath(fullfile(projectPath,'Patterns'))
-addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab14_1_2b')
+addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab2021.0\')
 eeglab
 load(fullfile(projectPath,'output','reftep_15-Mar-2023.mat'), 'allSubOut')
 load(fullfile(projectPath,'Patterns','chanlocs.mat'))
@@ -36,22 +36,41 @@ for idxSub = 1:length(subjects)
         rmch = badCh;
     end
 
-    %interpolate missing channels
-    EEG.data = abs(Vinv(:,1)); %select first pattern, compute magnitude
+    %interpolate real patterns of High condition
+    EEG.data = real(Vinv(:,1)); %take real part of the first pattern
     EEG.chanlocs = chanlocs0(~rmch);
     EEG.pnts = 1;
     EEG.trials = 1;
     EEG.nbchan = sum(~rmch);
-    EEG = pop_interp( EEG, chanlocs,'spherical');
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
 
     %reorder data by a standard channel order
     [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
     EEG.chanlocs = EEG.chanlocs(reorderingIdx);
     EEG.data     = EEG.data(reorderingIdx);
 
-    allPatterns(:,idxSub) = EEG.data;
+    realPattern = EEG.data;
+
+    %interpolate imaginary patterns of High condition
+    EEG.data = imag(Vinv(:,1)); %take imaginary part of the first pattern
+    EEG.chanlocs = chanlocs0(~rmch);
+    EEG.pnts = 1;
+    EEG.trials = 1;
+    EEG.nbchan = sum(~rmch);
+    EEG = pop_interp( EEG, chanlocs,'spherical'); %interpolate missing channels
+
+    %reorder data by a standard channel order
+    [~,reorderingIdx] = ismember(lower({chanlocs.labels}), lower({EEG.chanlocs.labels}));
+    EEG.chanlocs = EEG.chanlocs(reorderingIdx);
+    EEG.data     = EEG.data(reorderingIdx);
+
+    imagPattern = EEG.data;
+
+    allPatterns(:,idxSub) = realPattern + 1i*imagPattern; %combine them back into complex values
 
 end
+
+allPatterns = abs(allPatterns);
 %% calculate spatial correlation of each pattern with an average pattern
 clear coefSim
 
