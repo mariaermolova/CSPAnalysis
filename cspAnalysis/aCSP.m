@@ -35,20 +35,23 @@ for subnum = subjects
 
     param = [];
     param.subID = dataTableSub.ID; %dataset id
-    param.freq = [8]; %lowest frequencies of analysed freq bands: [8] [7 13 22 31] [4 8 13 30] 
-    param.freqWindow = [22]; %widths of analysed freq bands (freq:(freq+freqband)), vector of the same length as param.freq: [22] [6 9 9 10] [4 5 17 10] 
-    param.toiWindow = 499; %time window in samples, 499 for reftep analysis
-    param.toi = [size(eeg,2)-param.toiWindow]; %toi: [size(eeg,2)-param.toiWindow]. [1:250:751], if several time windows
+    param.freq = [8]; %lowest frequencies of analysed freq bands: [8] or [4 8 13 30], if several freq bands 
+    param.freqWindow = [22]; %widths of analysed freq bands (freq:(freq+freqband)), vector of the same length as param.freq: [22] or [4 5 17 10], if several freq bands 
+    param.toiWindow = 499; %time window in samples
+    param.toi = [size(eeg,2)-param.toiWindow]; %toi: [size(eeg,2)-param.toiWindow] or [1:250:751], if several time windows
     param.nFolds = 5; %number of folds
-    param.nTimes = 5; %number of times, 1 or 5
+    param.nTimes = 5; %number of times
     param.bpfiltparam.FilterOrder = 6; %order of the bandpass filter
     param.bpfiltparam.DesignMethod = 'butter';%type of the bandpass filter
     param.SampleRate = 1000; %SF of input eeg data
     param.class.CV = classId; %store class indices
-    param.nChCSP = [2 4 6]; %hyperparameter: number of CSP channels
+    param.nChCSP = [2 4 6]; %hyperparameter: number of CSP channels: [2 4 6] or [2] if only the first components are used in LDA
     param.regulCoef = [1e-8 1e-6 1e-4 1e-2 1e-1]; %hyperparameter: regularization coefficient for csp
     hyperParamList(:,1) = [repmat(1,5,1); repmat(2,5,1); repmat(3,5,1)]; %create all combos of hyperparameters for parallel processing
     hyperParamList(:,2) = [repmat([1 2 3 4 5]',3,1)];
+    %if nChCSP = [2],change to this:
+%     hyperParamList(:,1) = [repmat(1,5,1); repmat(2,5,1); repmat(3,5,1)]; %create all combos of hyperparameters for parallel processing
+%     hyperParamList(:,2) = [repmat([1 2 3 4 5]',3,1)];
     param.hyperParamList = hyperParamList;
 
     %% Clean up and prepare storage space for results
