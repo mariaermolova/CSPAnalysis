@@ -2,6 +2,7 @@ function [data1,data2] = prepDataforCSP(param,data,freqIdx,toiIdx,trialFlag,clas
 %Prepare EEG data for the CSP analysis. 
 %bp filter, hilbert transform, cut to toi, separate conditions, equalize
 %number of trials, if uneven
+%To perform real-valued CSP analysis, comment line 28 and uncomment line 29
 
 % bp filter
 bpFilt = designfilt('bandpassiir','FilterOrder',param.bpfiltparam.FilterOrder, ...
@@ -25,6 +26,7 @@ toi2 = floor((param.toi(toiIdx)+param.toiWindow)/4);
 
 % hilbert transform
 hilbData = hilbert(resampledData); % hilbert transform
+% hilbData = resampledData; % skip Hilbert to run real-valued CSP
 hilbData = hilbData(padSize+1:end-padSize,:,:);
 hilbData = permute(hilbData,[2 1 3]); %chan x time x trial
 hilbData = hilbData(:,toi1:toi2,:); % choose time
