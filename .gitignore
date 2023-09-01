@@ -8,6 +8,3 @@ playground/
 
 *.xlsx
 
-Patterns/*
-
-!Patterns/calculatePatternsFun.m
