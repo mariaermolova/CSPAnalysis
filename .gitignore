@@ -1,0 +1,13 @@
+
+movies/
+
+output/
+
+playground/
+
+
+*.xlsx
+
+Patterns/
+
+!Patterns/calculatePatternsFun.m
