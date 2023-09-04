@@ -5,8 +5,26 @@ output/
 
 playground/
 
-
 *.xlsx
 
+untracked/
 
-cspAnalysis/prepDataforCSPreal.m
+cleaned/
+
+graveyard/
+
+realtime/
+
+raw/
+
+RS_data/
+
+screen3/
+
+simulations/
+
+SourceAnalysis/
+
+create_chanlocs.m
+
+cleaning_eeg_reftep.m
