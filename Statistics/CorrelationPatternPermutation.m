@@ -8,7 +8,7 @@ clear
 projectPath = 'W:\Projects\2018-12 POSTHOCSOURCE Project\analysis_maria\CSPRepo';
 addpath(fullfile(projectPath,'cspAnalysis'))
 addpath(fullfile(projectPath,'Patterns'))
-addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab14_1_2b')
+addpath('C:\Users\BNPPC08\Desktop\Maria\matlab\toolboxes\eeglab2021.0\')
 eeglab
 load(fullfile(projectPath,'output','reftep_15-Mar-2023.mat'), 'allSubOut')
 load(fullfile(projectPath,'Patterns','chanlocs.mat'))
