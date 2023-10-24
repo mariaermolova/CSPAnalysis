@@ -1,5 +1,5 @@
 # Analytic Common Spatial Pattern (aCSP) analysis on TMS-EEG data.
-The main analysis codes are [here](cspAnalysis). The main script is [aCSPmain.m](cspAnalysis/aCSPmain.m), it calls the other finctions in the [cspAnalysis](cspAnalysis) subfolder. The data used as input is published in: 10.5281/zenodo.10034964 (not yet publicly available). Only the data from 12 out of 20 analysed subjects are published due to data protection agreement.
+The main analysis codes are [here](cspAnalysis). The main script is [aCSPmain.m](cspAnalysis/aCSPmain.m), it calls the other finctions in the [cspAnalysis](cspAnalysis) subfolder. The data used as input is published in: 10.5281/zenodo.10034964. Only the data from 12 out of 20 analysed subjects are published due to data protection agreement.
 
 The codes for the creating of figures from the manuscript are [here](ManuscriptFigures). Since the training-test data assignment is random and can lead to different results, the dataset, the results of which are reported in the manuscript, is shared [here](ManuscriptFigures/fig_PSD_TC_data.mat).
 
